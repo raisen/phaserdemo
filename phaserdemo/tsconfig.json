@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "none",        
+        "preserveConstEnums": true //,               
+        ,"outFile": "src/build/game.js"
+       
+    },
+    "include": [
+        "src/Globals/keys.enum.ts",
+        "src/StateManager/**/*",
+        "src/States/Boot.ts",
+        "src/States/Game.ts",
+        "src/States/Level1.ts",
+        "src/States/Level2.ts",
+        "src/States/Preloader.ts",
+        "src/Classes/Star.ts",
+        "src/start.ts",
+        "typings/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}
