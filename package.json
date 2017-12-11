@@ -1,0 +1,17 @@
+{
+  "name": "phaserdemo",
+  "version": "0.0.1",
+  "description": "Phaser demo project using Typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ws -d src/",
+    "ts": "./node_modules/.bin/tsc -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "local-web-server": "^2.3.0",
+    "typescript": "^2.6.2"
+  }
+}
