@@ -19,7 +19,7 @@ namespace MyGame
         }
         getState()
         {
-            return this.state;
+            return this.state || {} as LevelChangedState;
         }
     }
 }

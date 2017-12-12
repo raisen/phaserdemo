@@ -12,7 +12,7 @@ module MyGame {
         }
 
         create() {
-            this.game.state.start('Level1', true, false);
+            this.game.state.start(LevelOrder.getInstance().nextState(), true, false);
         }
 
     }

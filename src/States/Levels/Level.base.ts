@@ -1,35 +1,20 @@
 module MyGame {
 
-    export class Level2 extends Phaser.State {
+    export abstract class Level extends Phaser.State {
 
         player: Phaser.Sprite;
         platforms: Phaser.Group;
         stars: Phaser.Group;
+        abstract levelName: string;
         scoreText;
-        levelText;
         score = 0;
+        levelComplete = false;
+
         create() {
-            this.score = MyStateManager.getInstance().getState().score;
-
             this.game.add.sprite(0, 0, KEYS.sky);
-
-            this.platforms = this.game.add.group();
-
-            this.platforms.enableBody = true;
-
-            var ground = this.platforms.create(0, this.game.world.height - 64, KEYS.ground);
-
-            ground.scale.setTo(2, 2);
-
-            ground.body.immovable = true;
-
-            var ledge = this.platforms.create(300, 300, KEYS.ground);
-
-            ledge.body.immovable = true;
-
-            ledge = this.platforms.create(-150, 450, KEYS.ground);
-
-            ledge.body.immovable = true;
+            this.game.add.text(16, 16, this.levelName, { font: '12px Arial', fill: '#000' });
+            this.score = MyStateManager.getInstance().getState().score || 0;
+            this.scoreText = this.game.add.text(16, 32, 'score: ' + this.score, { font: '12px Arial', fill: '#000' });
 
             this.player = this.game.add.sprite(32, this.game.world.height - 150, KEYS.dude);
 
@@ -42,27 +27,57 @@ module MyGame {
             this.player.animations.add('left', [0, 1, 2, 3], 10, true);
             this.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
+            this.platforms = this.game.add.group();
+            this.platforms.enableBody = true;
+
+            var ground = this.platforms.create(0, this.game.world.height - 64, KEYS.ground);
+
+            ground.scale.setTo(2, 2);
+
+            ground.body.immovable = true;
 
             this.stars = this.game.add.group();
 
             this.stars.enableBody = true;
 
-
             for (var i = 0; i < 12; i++) {
                 var star = new Star(this.game, i * 70, 0, this.stars, 10);
             }
-            this.game.add.text(16, 16, 'Level 2', { font: '12px Arial', fill: '#000' });
-            this.scoreText = this.game.add.text(16, 32, 'score: ' + this.score, { font: '12px Arial', fill: '#000' });
+        }
+
+        loadNextLevel() {
+            MyStateManager.getInstance().saveState({ score: this.score });
+            let nextState = LevelOrder.getInstance().nextState();
+            if (nextState) {
+                this.game.state.start(nextState);
+            }
+            else
+            {
+                this.game.paused = true;
+                if(this.score>=100)
+                {
+                    alert("You win!!")
+                    
+                }
+                else
+                {
+                    alert("You suck!")
+                }
+            }
         }
 
         update() {
+
+            if (this.levelComplete) {
+
+                this.loadNextLevel();
+            }
+
             var cursors = this.game.input.keyboard.createCursorKeys();
 
             var hitPlatform = this.game.physics.arcade.collide(this.player, this.platforms);
             var starsHitPlatform = this.game.physics.arcade.collide(this.stars, this.platforms, this.starLanded);
             this.game.physics.arcade.overlap(this.player, this.stars, this.collectStar, null, this);
-
-
 
 
             this.player.body.velocity.x = 0;
@@ -89,6 +104,7 @@ module MyGame {
             star.kill();
             this.score += star.points;
             this.scoreText.text = 'Score: ' + this.score;
+            this.updateLevelComplete();
         }
 
         starLanded = (star: Star) => {
@@ -98,9 +114,13 @@ module MyGame {
                 star.flicker();
                 setTimeout(() => {
                     star.kill();
+                    this.updateLevelComplete();
                 }, star.lifespanAfterLanding)
             }
         }
+
+        //check for level-specific completion scenario
+        abstract updateLevelComplete = () => { };
 
     }
 
