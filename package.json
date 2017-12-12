@@ -13,5 +13,6 @@
   "devDependencies": {
     "local-web-server": "^2.3.0",
     "typescript": "^2.6.2"
-  }
+  },
+  "dependencies": {}
 }

@@ -18,6 +18,7 @@
         "src/States/Levels/LevelOrder.ts",        
         "src/States/Preloader.ts",        
         "src/Classes/Star.ts",
+        "src/Classes/Enemy.ts",
         "src/start.ts",
         "typings/**/*"
     ],

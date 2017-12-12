@@ -1,13 +1,14 @@
 module MyGame {
 
     export abstract class Level extends Phaser.State {
-
         player: Phaser.Sprite;
         platforms: Phaser.Group;
+        enemies: Phaser.Group;
         stars: Phaser.Group;
         abstract levelName: string;
         scoreText;
         score = 0;
+        ground: Phaser.Sprite;
         levelComplete = false;
 
         create() {
@@ -32,11 +33,11 @@ module MyGame {
             this.platforms = this.game.add.group();
             this.platforms.enableBody = true;
 
-            var ground = this.platforms.create(0, this.game.world.height - 64, KEYS.ground);
+            this.ground = this.platforms.create(0, this.game.world.height - 64, KEYS.ground);
 
-            ground.scale.setTo(2, 2);
+            this.ground.scale.setTo(2, 2);
 
-            ground.body.immovable = true;
+            this.ground.body.immovable = true;
 
             this.stars = this.game.add.group();
 
@@ -71,9 +72,15 @@ module MyGame {
         update() {
 
             if (this.levelComplete) {
-
-                this.loadNextLevel();
+                return this.loadNextLevel();
             }
+
+            if(this.enemies) {
+                this.enemies.callAll('update', null);
+            }
+            
+            var enemyHitPlatform = this.game.physics.arcade.collide(this.enemies, this.platforms, this.enemyPlatformCollided);
+            var enemyHitPlayer = this.game.physics.arcade.collide(this.enemies, this.player, this.enemyPlayerCollided, null, this);
 
             var cursors = this.game.input.keyboard.createCursorKeys();
 
@@ -98,13 +105,21 @@ module MyGame {
             }
 
             if (cursors.up.isDown && this.player.body.touching.down && hitPlatform) {
-                new Phaser.Sound(this.game, KEYS.audio_jump, 1, false).play();               
+                new Phaser.Sound(this.game, KEYS.audio_jump, 1, false).play();
                 this.player.body.velocity.y = -350;
             }
         }
 
+        enemyPlatformCollided(enemy, platform) {
+            enemy.onPlatform = platform;
+        }
+
+        enemyPlayerCollided(enemy, player) {
+            enemy.body.velocity.x *= -1;
+        }
+
         collectStar = (player, star: Star) => {
-            new Phaser.Sound(this.game, KEYS.audio_correct, 1, false).play();           
+            new Phaser.Sound(this.game, KEYS.audio_correct, .2, false).play();           
             star.kill();
             this.score += star.points;
             this.scoreText.text = 'Score: ' + this.score;
