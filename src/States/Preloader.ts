@@ -8,7 +8,9 @@ module MyGame {
             this.game.load.image(KEYS.ground, './assets/platform.png');
             this.game.load.image(KEYS.star, './assets/star.png');
             this.game.load.spritesheet(KEYS.dude, './assets/dude.png', 32, 48);
-
+            this.game.load.audio(KEYS.audio_correct, './assets/correct.wav');
+            this.game.load.audio(KEYS.audio_jump, './assets/jump.wav');
+            this.game.load.audio(KEYS.audio_music, './assets/music.mp3');
         }
 
         create() {

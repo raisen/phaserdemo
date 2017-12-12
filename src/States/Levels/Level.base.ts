@@ -11,6 +11,8 @@ module MyGame {
         levelComplete = false;
 
         create() {
+            this.game.add.audio(KEYS.audio_music, .5, true).play();
+            
             this.game.add.sprite(0, 0, KEYS.sky);
             this.game.add.text(16, 16, this.levelName, { font: '12px Arial', fill: '#000' });
             this.score = MyStateManager.getInstance().getState().score || 0;
@@ -96,11 +98,13 @@ module MyGame {
             }
 
             if (cursors.up.isDown && this.player.body.touching.down && hitPlatform) {
+                new Phaser.Sound(this.game, KEYS.audio_jump, 1, false).play();               
                 this.player.body.velocity.y = -350;
             }
         }
 
         collectStar = (player, star: Star) => {
+            new Phaser.Sound(this.game, KEYS.audio_correct, 1, false).play();           
             star.kill();
             this.score += star.points;
             this.scoreText.text = 'Score: ' + this.score;
@@ -121,7 +125,5 @@ module MyGame {
 
         //check for level-specific completion scenario
         abstract updateLevelComplete = () => { };
-
     }
-
 } 
